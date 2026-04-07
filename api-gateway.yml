@@ -1,0 +1,16 @@
+server:
+  port: 8882
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: test-route
+          uri: http://httpbin.org
+          predicates:
+            - Path=/test/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8881/eureka
