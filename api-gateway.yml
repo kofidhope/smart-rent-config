@@ -8,7 +8,7 @@ spring:
         - id: test-route
           uri: http://httpbin.org
           predicates:
-            - Path=/test/**
+            - Path=/get/**
 
 eureka:
   client:
