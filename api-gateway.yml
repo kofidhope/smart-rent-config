@@ -4,13 +4,20 @@ server:
 spring:
   cloud:
     gateway:
-      routes:
-        - id: test-route
-          uri: http://httpbin.org
-          predicates:
-            - Path=/get/**
+      server:
+        webflux:
+          routes:
+            - id: test-route
+              uri: http://httpbin.org
+              predicates:
+                - Path=/get/**
 
 eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
   client:
     service-url:
-      defaultZone: http://localhost:8881/eureka
+      defaultZone: http://localhost:8881/eureka/
+    fetch-registry: true
+    register-with-eureka: true
