@@ -17,8 +17,9 @@ spring:
         format_sql: true
 
 eureka:
-  prefer-ip-address: true
-  instance-id: ${spring.application.name}:${server.port}
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
   client:
     service-url:
       defaultZone: http://localhost:8881/eureka/
