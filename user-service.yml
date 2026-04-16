@@ -18,9 +18,12 @@ spring:
 
 eureka:
   instance:
+    appname: ${spring.application.name}
     prefer-ip-address: true
     instance-id: ${spring.application.name}:${server.port}
   client:
+    jersey:
+      enabled: false
     service-url:
       defaultZone: http://localhost:8881/eureka/
     fetch-registry: true
