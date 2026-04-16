@@ -2,6 +2,9 @@ server:
   port: 8882
 
 spring:
+  spring:
+    application:
+      name: api-gateway
   cloud:
     gateway:
       server:
