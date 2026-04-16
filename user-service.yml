@@ -2,6 +2,10 @@ server:
   port: 8883
 
 spring:
+  cloud:
+    loadbalancer:
+      cache:
+        enabled: true
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -28,6 +32,7 @@ eureka:
       defaultZone: http://localhost:8881/eureka/
     fetch-registry: true
     register-with-eureka: true
+    registry-fetch-interval-seconds: 5
 
 management:
   endpoints:
