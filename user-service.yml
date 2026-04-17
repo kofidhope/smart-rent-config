@@ -38,5 +38,8 @@ management:
 
 logging:
   level:
-    com.kofi.userservice.config.AuthClient: DEBUG
     org.springframework.cloud.openfeign: DEBUG
+    org.springframework.cloud.loadbalancer: TRACE
+    org.springframework.cloud.netflix.eureka: DEBUG
+    com.netflix.discovery: DEBUG
+    feign: DEBUG
