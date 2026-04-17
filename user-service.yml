@@ -3,9 +3,11 @@ server:
 
 spring:
   cloud:
-    loadbalancer:
-      cache:
-        enabled: true
+    openfeign:
+      client:
+        config:
+          auth-service:
+            url: http://localhost:8884
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
