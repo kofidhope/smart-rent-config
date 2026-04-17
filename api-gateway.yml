@@ -9,10 +9,15 @@ spring:
       server:
         webflux:
           routes:
-            - id: test-route
-              uri: http://httpbin.org
+            - id: user-service
+              uri: lb://user-service
               predicates:
-                - Path=/get/**
+                - Path=/users/**
+
+            - id: auth-service
+              uri: lb://auth-service
+              predicates:
+                - Path=/auth/**
 
 eureka:
   instance:
