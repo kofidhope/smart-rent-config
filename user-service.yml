@@ -2,6 +2,13 @@ server:
   port: 8883
 
 spring:
+  cloud:
+    loadbalancer:
+      cache:
+        ttl: 5s
+      enabled: true
+    discovery:
+      enabled: true
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -29,17 +36,10 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     registry-fetch-interval-seconds: 5
+    instance-info-replication-interval-seconds: 5
 
 management:
   endpoints:
     web:
       exposure:
         include: health, info
-
-logging:
-  level:
-    org.springframework.cloud.openfeign: DEBUG
-    org.springframework.cloud.loadbalancer: TRACE
-    org.springframework.cloud.netflix.eureka: DEBUG
-    com.netflix.discovery: DEBUG
-    feign: DEBUG
