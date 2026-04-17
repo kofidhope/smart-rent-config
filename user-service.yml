@@ -2,12 +2,6 @@ server:
   port: 8883
 
 spring:
-  cloud:
-    openfeign:
-      client:
-        config:
-          auth-service:
-            url: http://localhost:8884
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -41,3 +35,8 @@ management:
     web:
       exposure:
         include: health, info
+
+logging:
+  level:
+    com.kofi.userservice.config.AuthClient: DEBUG
+    org.springframework.cloud.openfeign: DEBUG
