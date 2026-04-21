@@ -5,12 +5,12 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: user-service
+        - id: USER-SERVICE
           uri: lb://user-service
           predicates:
             - Path=/users/**
 
-        - id: auth-service
+        - id: AUTH-SERVICE
           uri: lb://auth-service
           predicates:
             - Path=/auth/**
