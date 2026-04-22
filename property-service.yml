@@ -1,0 +1,92 @@
+server:
+  port: 8886it
+
+spring:
+  datasource:
+    url: ${P_DB_URL}
+    username: ${P_DB_USERNAME}
+    password: ${P_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 20000
+      minimum-idle: 5
+      maximum-pool-size: 10
+      idle-timeout: 300000
+      max-lifetime: 1200000
+      pool-name: PropertyServiceHikariPool
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    validate-on-migrate: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8881/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    appname: ${spring.application.name}
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
+
+feign:
+  client:
+    config:
+      user-service:
+        connect-timeout: 3000
+        read-timeout: 5000
+  circuitbreaker:
+    enabled: true
+
+#resilience4j:
+#  circuitbreaker:
+#    instances:
+#      user-service:
+#        sliding-window-size: 10
+#        failure-rate-threshold: 50
+#        wait-duration-in-open-state: 10s
+#        permitted-number-of-calls-in-half-open-state: 3
+#        automatic-transition-from-open-to-half-open-enabled: true
+#  retry:
+#    instances:
+#      user-service:
+#        max-attempts: 3
+#        wait-duration: 1s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+  tracing:
+    sampling:
+      probability: 1.0
+
+logging:
+  level:
+    com.smartrent.property: DEBUG
+    org.springframework.cloud.openfeign: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [traceId=%X{traceId}] %logger{36} - %msg%n"
