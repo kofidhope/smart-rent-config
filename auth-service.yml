@@ -13,17 +13,18 @@ jwt:
   refresh-expiration: ${JWT_REFRESH_EXPIRATION}
 
 eureka:
-  instance:
-    appname: ${spring.application.name}
-    prefer-ip-address: true
-    instance-id: ${spring.application.name}:${server.port}
   client:
-    jersey:
-      enabled: false
     service-url:
       defaultZone: http://localhost:8881/eureka/
     fetch-registry: true
     register-with-eureka: true
+    registry-fetch-interval-seconds: 5
+  instance:
+    appname: ${spring.application.name}
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}e
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
 
 management:
   endpoints:
