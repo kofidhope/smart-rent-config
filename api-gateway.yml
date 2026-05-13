@@ -4,25 +4,170 @@ server:
 spring:
   cloud:
     gateway:
+      # GLOBAL FILTERS
+      # Applied to every route automatically
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin
+        - DedupeResponseHeader=Access-Control-Allow-Credentials
+      discovery:
+        locator:
+          enabled: false
       routes:
-        - id: USER-SERVICE
-          uri: lb://user-service
+        # ── AUTH SERVICE ─────────────────────────────
+        # Public — no JWT required
+        # Login and register endpoints
+        - id: auth-service-public
+          uri: lb://AUTH-SERVICE
           predicates:
-            - Path=/users/**
-
-        - id: AUTH-SERVICE
-          uri: lb://auth-service
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=0
+        # ── USER SERVICE ─────────────────────────────
+        # Protected — JWT required
+        - id: user-service
+          uri: lb://USER-SERVICE
           predicates:
-            - Path=/auth/**
+            - Path=/api/users/**
+          filters:
+            - StripPrefix=0
+        # ── PROPERTY SERVICE — public search ─────────
+        # Public — no JWT needed to browse properties
+        - id: property-service-public
+          uri: lb://PROPERTY-SERVICE
+          predicates:
+            - Path=/api/properties/search, /api/properties/{id}
+            - Method=GET
+          filters:
+            - StripPrefix=0
+        # ── PROPERTY SERVICE — protected ─────────────
+        # JWT required — landlord operations
+        - id: property-service-protected
+          uri: lb://PROPERTY-SERVICE
+          predicates:
+            - Path=/api/properties/**
+          filters:
+            - StripPrefix=0
+        # ── BOOKING SERVICE ───────────────────────────
+        # JWT required — tenant and landlord operations
+        - id: booking-service
+          uri: lb://BOOKING-SERVICE
+          predicates:
+            - Path=/api/bookings/**
+          filters:
+            - StripPrefix=0
+        # ── PAYMENT SERVICE — webhook ─────────────────
+        # Public — Paystack calls this directly
+        # No JWT — Paystack uses its own signature
+        - id: payment-service-webhook
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/api/payments/webhook
+            - Method=POST
+          filters:
+            - StripPrefix=0
+        # ── PAYMENT SERVICE — protected ───────────────
+        # JWT required — tenant payment queries
+        - id: payment-service-protected
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/api/payments/**
+          filters:
+            - StripPrefix=0
 
+  # REDIS — used by RateLimitFilter
+  # Same Redis instance as other services
+  # Gateway uses the reactive client automatically
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 4
+          min-idle: 2
 eureka:
-  instance:
-    prefer-ip-address: true
-    instance-id: ${spring.application.name}:${server.port}
-
   client:
     service-url:
       defaultZone: http://localhost:8881/eureka/
     fetch-registry: true
     register-with-eureka: true
+    registry-fetch-interval-seconds: 5
+  instance:
+    appname: ${spring.application.name}
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}e
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
 
+# JWT configuration
+# Must match the secret used by auth-service
+# to sign tokens — same secret, same algorithm
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION}
+
+# Gateway internal config
+gateway:
+  # Shared secret between gateway and all Services reject requests missing this header
+  internal-secret: ${GATEWAY_INTERNAL_SECRET}
+  # Rate limiting — requests per minute per user
+  rate-limit:
+    requests-per-minute: 60
+    burst-capacity: 20
+
+  # CORS — origins allowed to call the gateway Add your frontend URL here
+  cors:
+    allowed-origins:
+      - http://localhost:3000
+      - http://localhost:5173
+      - http://localhost:4200
+    allowed-methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+      - OPTIONS
+    allowed-headers:
+      - Authorization
+      - Content-Type
+      - X-User-Id
+    exposed-headers:
+      - X-Rate-Limit-Remaining
+    allow-credentials: true
+    max-age: 3600
+
+  # Public paths — skip JWT validation entirely
+  public-paths:
+    - /api/auth/login
+    - /api/auth/register
+    - /api/auth/refresh
+    - /api/properties/search
+    - /api/payments/webhook
+    - /actuator/health
+    - /actuator/info
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+
+logging:
+  level:
+    com.smartrent.gateway: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [traceId=%X{traceId}] %logger{36} - %msg%n"
