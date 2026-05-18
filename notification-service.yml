@@ -99,6 +99,10 @@ twilio:
   whatsapp-number: "whatsapp:+14155238886"
   messaging-service-sid: MGxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
+gateway:
+  # Shared secret between gateway and all Services reject requests missing this header
+  internal-secret: ${GATEWAY_INTERNAL_SECRET}
+
 management:
   endpoints:
     web:

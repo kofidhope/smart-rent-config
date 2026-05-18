@@ -122,6 +122,10 @@ management:
     sampling:
       probability: 1.0
 
+gateway:
+  # Shared secret between gateway and all Services reject requests missing this header
+  internal-secret: ${GATEWAY_INTERNAL_SECRET}
+
 logging:
   level:
     com.smartrent.booking: DEBUG

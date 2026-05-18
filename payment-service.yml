@@ -103,6 +103,10 @@ paystack:
   base-url: https://api.paystack.co
   currency: GHS
 
+gateway:
+  # Shared secret between gateway and all Services reject requests missing this header
+  internal-secret: ${GATEWAY_INTERNAL_SECRET}
+
 management:
   endpoints:
     web:
