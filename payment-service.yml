@@ -97,11 +97,11 @@ resilience4j:
 # Paystack configuration
 # Replace test keys with live keys in production
 paystack:
-  secret-key: sk_test_your_secret_key_here
-  public-key: pk_test_your_public_key_here
-  webhook-secret: your_webhook_secret_here
-  base-url: https://api.paystack.co
-  currency: GHS
+  secret-key: ${PAYSTACK_SECRET_KEY}
+  public-key: ${PAYSTACK_PUBLIC_KEY}
+  webhook-secret: ${PAYSTACK_WEBHOOK_SECRET}
+  base-url: ${PAYSTACK_BASE_URL}
+  currency: ${PAYSTACK_CURRENCY}
 
 gateway:
   # Shared secret between gateway and all Services reject requests missing this header

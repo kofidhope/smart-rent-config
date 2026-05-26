@@ -93,11 +93,11 @@ resilience4j:
 # Twilio configuration
 # Get these from console.twilio.com
 twilio:
-  account-sid: ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  auth-token: your_auth_token_here
-  phone-number: "+1xxxxxxxxxx"
-  whatsapp-number: "whatsapp:+14155238886"
-  messaging-service-sid: MGxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  account-sid: ${TWILIO_ACCOUNT_SID}
+  auth-token: ${TWILIO_AUTH_TOKEN}
+  phone-number: ${TWILIO_PHONE_NUMBER}
+  whatsapp-number: ${TWILIO_WHATSAPP_NUMBER}
+  messaging-service-sid: ${TWILIO_MESSAGING_SERVICE_SID}
 
 gateway:
   # Shared secret between gateway and all Services reject requests missing this header
