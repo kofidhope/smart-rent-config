@@ -142,9 +142,9 @@ gateway:
 
   # Public paths — skip JWT validation entirely
   public-paths:
-    - /api/auth/login
-    - /api/auth/register
-    - /api/auth/refresh
+    - /api/users/login
+    - /api/users/register
+    - /api/users/refresh
     - /api/properties/search
     - /api/payments/webhook
     - /actuator/health
