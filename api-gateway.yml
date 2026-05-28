@@ -4,6 +4,7 @@ server:
 spring:
   cloud:
     gateway:
+      internal-secret: ${GATEWAY_INTERNAL_SECRET}
       # GLOBAL FILTERS
       # Applied to every route automatically
       default-filters:
