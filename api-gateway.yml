@@ -18,7 +18,7 @@ spring:
         # Public — no JWT required
         # Login and register endpoints
         - id: auth-service-public
-          uri: lb://auth-service
+          uri: lb://AUTH-SERVICE
           predicates:
             - Path=/api/auth/**
           filters:
@@ -26,7 +26,7 @@ spring:
         # ── USER SERVICE ─────────────────────────────
         # Protected — JWT required
         - id: user-service
-          uri: lb://user-service
+          uri: lb://AUTH-SERVICE
           predicates:
             - Path=/api/users/**
           filters:
