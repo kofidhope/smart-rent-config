@@ -146,6 +146,7 @@ gateway:
     - /api/users/login
     - /api/users/register
     - /api/users/refresh
+    - /api/auth/logout
     - /api/properties/search
     - /api/payments/webhook
     - /actuator/health
